@@ -33,6 +33,11 @@ enum Marker: Equatable {
     case Cross
 }
 
+enum BoardOrMsg {
+    case Board
+    case Error(String)
+}
+
 func theOtherMarker(marker: Marker) -> Marker {
     if marker == Marker.Circle {
         return Marker.Cross
@@ -95,8 +100,6 @@ struct Board {
         grid = fieldsToGrid(fields)
     }
 }
-
-func
 
 let c = [[1,2,3], [4,5,6], [7,8,9]]
 c[0][2] // first is row, second is col
@@ -209,4 +212,20 @@ func playerWon(marker: Marker, grid: Grid) -> Bool {
     return false
 }
 
+
+0...2 ~= 3
+
+func makeMove(board: Board, marker: Marker, choice: (Int, Int)) -> BoardOrMsg {
+    assert(0...2 ~= choice.0 && 0...2 ~= choice.1)
+    
+    if board.grid[choice.0][choice.1] == Field.Empty {
+        return BoardOrMsg.Error("Illegal move, (\(choice.0), \(choice.1) is not empty)")
+    }
+    
+    var newGrid = board.grid
+    newGrid[choice.0][choice.1] = Field.Marked(marker)
+    let newBoard = Board(grid)
+    
+    return BoardOrMsg.Board(newBoard)
+}
 

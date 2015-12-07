@@ -35,6 +35,11 @@ func ==(lhs: Field, rhs: Field) -> Bool {
     }
 }
 
+enum BoardOrMsg {
+    case Success(Board)
+    case Error(String)
+}
+
 struct Board {
     
     // should always contain nine fields
@@ -52,7 +57,7 @@ struct Board {
         }
     }
     
-    // checks if one of the players won the game (nil if no winnter yet or board full)
+    // checks if one of the players won the game (nil if no winner yet or board full)
     var winner: Marker? {
         get {
             if playerWon(Marker.Circle, grid: grid) {
@@ -69,9 +74,27 @@ struct Board {
         grid = fieldsToGrid(fields)
     }
     
+    init(grid: [[Field]]) {
+        self.grid = grid
+    }
 }
 
 
+// MARK: Game
+
+func makeMove(board: Board, marker: Marker, choice: (Int, Int)) -> BoardOrMsg {
+    assert(0...2 ~= choice.0 && 0...2 ~= choice.1)
+    
+    if board.grid[choice.0][choice.1] == Field.Empty {
+        return BoardOrMsg.Error("Illegal move, (\(choice.0), \(choice.1) is not empty)")
+    }
+    
+    var newGrid = board.grid
+    newGrid[choice.0][choice.1] = Field.Marked(marker)
+    let newBoard = Board(grid: newGrid)
+    
+    return BoardOrMsg.Success(newBoard)
+}
 
 
 
