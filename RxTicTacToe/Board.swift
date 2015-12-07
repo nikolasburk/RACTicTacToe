@@ -70,6 +70,11 @@ struct Board {
         }
     }
     
+    init() {
+        let fields = [Field](count: 9, repeatedValue:Field.Empty)
+        grid = fieldsToGrid(fields)
+    }
+    
     init(fields: [Field]) {
         grid = fieldsToGrid(fields)
     }
@@ -95,7 +100,6 @@ func makeMove(board: Board, marker: Marker, choice: (Int, Int)) -> BoardOrMsg {
     
     return BoardOrMsg.Success(newBoard)
 }
-
 
 
 // MARK: Helpers

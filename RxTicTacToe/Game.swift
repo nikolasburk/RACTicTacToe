@@ -8,13 +8,18 @@
 
 import Foundation
 
-
 struct Player {
     let name: String
     let marker: Marker
 }
 
 struct Game {
-    var board: Board
+    
+    let board = Board()
+    let players: (Player, Player)
+    
+    init(players: (Player, Player)) {
+        self.players = players
+    }
     
 }
