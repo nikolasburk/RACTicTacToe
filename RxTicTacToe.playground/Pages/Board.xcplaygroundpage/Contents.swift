@@ -215,17 +215,17 @@ func playerWon(marker: Marker, grid: Grid) -> Bool {
 
 0...2 ~= 3
 
-func makeMove(board: Board, marker: Marker, choice: (Int, Int)) -> BoardOrMsg {
-    assert(0...2 ~= choice.0 && 0...2 ~= choice.1)
-    
-    if board.grid[choice.0][choice.1] == Field.Empty {
-        return BoardOrMsg.Error("Illegal move, (\(choice.0), \(choice.1) is not empty)")
-    }
-    
-    var newGrid = board.grid
-    newGrid[choice.0][choice.1] = Field.Marked(marker)
-    let newBoard = Board(grid)
-    
-    return BoardOrMsg.Board(newBoard)
-}
+//func makeMove(board: Board, marker: Marker, choice: (Int, Int)) -> BoardOrMsg {
+//    assert(0...2 ~= choice.0 && 0...2 ~= choice.1)
+//    
+//    if board.grid[choice.0][choice.1] == Field.Empty {
+//        return BoardOrMsg.Error("Illegal move, (\(choice.0), \(choice.1) is not empty)")
+//    }
+//    
+//    var newGrid = board.grid
+//    newGrid[choice.0][choice.1] = Field.Marked(marker)
+//    let newBoard = Board(grid)
+//    
+//    return BoardOrMsg.Board(newBoard)
+//}
 
