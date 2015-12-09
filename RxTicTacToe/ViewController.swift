@@ -28,7 +28,7 @@ class ViewController: UIViewController {
     // MARK: Init and lifecycle
     
     required init?(coder aDecoder: NSCoder) {
-        self.gridView = createGridView({p in print("")})
+        self.gridView = createGridView()
         self.restartButton = createButton("Restart")
         self.whosTurnLabel = createLabel("Cross's turn")
         self.winnerLabel = createLabel("No winner yet")
@@ -48,7 +48,6 @@ class ViewController: UIViewController {
         setupConstraintsForNameElements()
 
         if let taps = createTapSignal() {
-//            taps.observe { self.someFunc($0.value) }
          
             taps.observe { event in
                 switch event {
@@ -80,8 +79,6 @@ class ViewController: UIViewController {
         }
     }
     
-
-    
     func createTapSignal() -> Signal<Position, NoError>? {
         var signals: [Signal<Position, NoError>] = []
         for maybeTap in self.gridView.cellsTapGestureRecognizers() {
@@ -96,10 +93,6 @@ class ViewController: UIViewController {
         return signals.count > 0 ? Signal.merge(signals) : nil
     }
     
-    func handleTap (position: Position) {
-        print("tapped at position \(position)")
-    }
-
     
     // MARK: Setup autolayout constraints
     
@@ -170,9 +163,10 @@ class ViewController: UIViewController {
     }
 }
 
+
 // MARK: Create UI elements
 
-func createGridView(tapHandler: Position -> ()) -> GridView {
+func createGridView(tapHandler: (Position -> ())? = nil) -> GridView {
     let gridViewFrame = CGRectMake(0.0, 0.0, 500.0, 500.0)
     return GridView(frame: gridViewFrame, tapHandler: tapHandler)
 }

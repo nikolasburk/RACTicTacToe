@@ -17,9 +17,9 @@ typealias Position = (Int, Int)
 class GridViewCell: UIImageView {
 
     let position: Position
-    let tapHandler: Position -> ()
+    let tapHandler: (Position -> ())?
     
-    init(frame: CGRect, position: Position, tapHandler: Position -> ()) {
+    init(frame: CGRect, position: Position, tapHandler: (Position -> ())?) {
         self.position = position
         self.tapHandler = tapHandler
         super.init(frame: frame)
@@ -30,8 +30,9 @@ class GridViewCell: UIImageView {
     }
     
     func handleTap(sender: UITapGestureRecognizer) {
-//        print("tapped \(self.position))")
-        self.tapHandler(self.position)
+        if let tapHandler = self.tapHandler {
+            tapHandler(self.position)
+        }
     }
     
     func tapGestureRecognizer() -> UITapGestureRecognizer? {
@@ -50,12 +51,12 @@ class GridViewCell: UIImageView {
 class GridView : UIView {
 
     var gridViewCells: [GridViewCell] = []
-    let tapHandler: Position -> ()
+    let tapHandler: (Position -> ())?
     
     
     // MARK: Initialization
     
-    init(frame: CGRect, tapHandler: Position -> ()) {
+    init(frame: CGRect, tapHandler: (Position -> ())?) {
         self.tapHandler = tapHandler
         super.init(frame: frame)
         let cells = createCells(self)
@@ -94,9 +95,9 @@ func createCells(gridView: GridView, numCells: Int = 9, var cells: [GridViewCell
     let cellSize = frame.scaleSize(withXFactor: scaleFactor, yFactor: scaleFactor)
     let origin = determineOrigin(withIndex: cells.count, size: cellSize)
     let targetFrame = CGRectMake(origin.x, origin.y, cellSize.width, cellSize.height)
+    
     let newCell = GridViewCell(frame: targetFrame, position: positionFromIndex(cells.count), tapHandler: gridView.tapHandler)
     newCell.image = UIImage(named: "cross")
-    
     newCell.userInteractionEnabled = true
     let tap = UITapGestureRecognizer(target: newCell, action: "handleTap:")
     newCell.addGestureRecognizer(tap)
