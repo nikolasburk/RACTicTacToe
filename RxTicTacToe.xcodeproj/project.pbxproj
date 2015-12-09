@@ -12,8 +12,9 @@
 		553FFF101C15D60B0091C1C7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 553FFF0E1C15D60B0091C1C7 /* Main.storyboard */; };
 		553FFF121C15D60B0091C1C7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 553FFF111C15D60B0091C1C7 /* Assets.xcassets */; };
 		553FFF151C15D60B0091C1C7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 553FFF131C15D60B0091C1C7 /* LaunchScreen.storyboard */; };
-		553FFF1D1C15D9610091C1C7 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 553FFF1C1C15D9610091C1C7 /* ReactiveCocoa.framework */; };
-		553FFF691C15E66F0091C1C7 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 553FFF681C15E66F0091C1C7 /* Result.framework */; };
+		5553B93D1C17741E00C8BDD6 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5553B93C1C17741E00C8BDD6 /* Result.framework */; };
+		5553B93F1C17742B00C8BDD6 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5553B93E1C17742B00C8BDD6 /* ReactiveCocoa.framework */; };
+		5553B9411C186ADD00C8BDD6 /* Signal+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5553B9401C186ADD00C8BDD6 /* Signal+Extensions.swift */; };
 		556A4AE51C163B4D00226518 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556A4AE41C163B4D00226518 /* MainViewModel.swift */; };
 		556A4AE81C163FDA00226518 /* GridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556A4AE71C163FDA00226518 /* GridView.swift */; };
 		55F31B8F1C15EB61006E1CF6 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F31B8E1C15EB61006E1CF6 /* Board.swift */; };
@@ -29,8 +30,9 @@
 		553FFF111C15D60B0091C1C7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		553FFF141C15D60B0091C1C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		553FFF161C15D60B0091C1C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		553FFF1C1C15D9610091C1C7 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
-		553FFF681C15E66F0091C1C7 /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/iOS/Result.framework; sourceTree = "<group>"; };
+		5553B93C1C17741E00C8BDD6 /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/iOS/Result.framework; sourceTree = "<group>"; };
+		5553B93E1C17742B00C8BDD6 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
+		5553B9401C186ADD00C8BDD6 /* Signal+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Signal+Extensions.swift"; path = "Extensions/Signal+Extensions.swift"; sourceTree = "<group>"; };
 		556A4AE41C163B4D00226518 /* MainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		556A4AE71C163FDA00226518 /* GridView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GridView.swift; path = Views/GridView.swift; sourceTree = "<group>"; };
 		55F31B8E1C15EB61006E1CF6 /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
@@ -43,8 +45,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				553FFF691C15E66F0091C1C7 /* Result.framework in Frameworks */,
-				553FFF1D1C15D9610091C1C7 /* ReactiveCocoa.framework in Frameworks */,
+				5553B93F1C17742B00C8BDD6 /* ReactiveCocoa.framework in Frameworks */,
+				5553B93D1C17741E00C8BDD6 /* Result.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,19 +73,35 @@
 		553FFF091C15D60B0091C1C7 /* RxTicTacToe */ = {
 			isa = PBXGroup;
 			children = (
+				55553D3E1C17618A003A7A5A /* View Controllers */,
+				55553D3D1C176175003A7A5A /* Game logic */,
 				556A4AE61C163FC900226518 /* Views */,
 				55F31B901C160E9D006E1CF6 /* Extensions */,
 				553FFF0A1C15D60B0091C1C7 /* AppDelegate.swift */,
-				553FFF0C1C15D60B0091C1C7 /* ViewController.swift */,
-				55F31B8E1C15EB61006E1CF6 /* Board.swift */,
 				553FFF0E1C15D60B0091C1C7 /* Main.storyboard */,
 				553FFF111C15D60B0091C1C7 /* Assets.xcassets */,
 				553FFF131C15D60B0091C1C7 /* LaunchScreen.storyboard */,
 				553FFF161C15D60B0091C1C7 /* Info.plist */,
-				55F31B931C1616D4006E1CF6 /* Game.swift */,
 				556A4AE41C163B4D00226518 /* MainViewModel.swift */,
 			);
 			path = RxTicTacToe;
+			sourceTree = "<group>";
+		};
+		55553D3D1C176175003A7A5A /* Game logic */ = {
+			isa = PBXGroup;
+			children = (
+				55F31B8E1C15EB61006E1CF6 /* Board.swift */,
+				55F31B931C1616D4006E1CF6 /* Game.swift */,
+			);
+			name = "Game logic";
+			sourceTree = "<group>";
+		};
+		55553D3E1C17618A003A7A5A /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				553FFF0C1C15D60B0091C1C7 /* ViewController.swift */,
+			);
+			name = "View Controllers";
 			sourceTree = "<group>";
 		};
 		556A4AE61C163FC900226518 /* Views */ = {
@@ -97,8 +115,8 @@
 		55F31B8D1C15EB3D006E1CF6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				553FFF681C15E66F0091C1C7 /* Result.framework */,
-				553FFF1C1C15D9610091C1C7 /* ReactiveCocoa.framework */,
+				5553B93E1C17742B00C8BDD6 /* ReactiveCocoa.framework */,
+				5553B93C1C17741E00C8BDD6 /* Result.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -107,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				55F31B911C160EBE006E1CF6 /* Array.swift */,
+				5553B9401C186ADD00C8BDD6 /* Signal+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -205,6 +224,7 @@
 				553FFF0D1C15D60B0091C1C7 /* ViewController.swift in Sources */,
 				55F31B941C1616D4006E1CF6 /* Game.swift in Sources */,
 				55F31B921C160EBE006E1CF6 /* Array.swift in Sources */,
+				5553B9411C186ADD00C8BDD6 /* Signal+Extensions.swift in Sources */,
 				556A4AE81C163FDA00226518 /* GridView.swift in Sources */,
 				553FFF0B1C15D60B0091C1C7 /* AppDelegate.swift in Sources */,
 				55F31B8F1C15EB61006E1CF6 /* Board.swift in Sources */,

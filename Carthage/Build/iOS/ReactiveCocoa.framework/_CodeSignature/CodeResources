@@ -106,7 +106,7 @@
 		</data>
 		<key>Headers/RACDynamicPropertySuperclass.h</key>
 		<data>
-		i8iPPr9wFXXq7qQxNjtnK0Y3WQc=
+		feQdP/OIxKRNUWoiSC18q2W2rvY=
 		</data>
 		<key>Headers/RACEvent.h</key>
 		<data>
@@ -198,7 +198,7 @@
 		</data>
 		<key>Headers/ReactiveCocoa-Swift.h</key>
 		<data>
-		EyH8iMox9iNAwXj/abxq1M0zbCs=
+		I2aNoktAcz0EUNcLU+Ra5lWD8G0=
 		</data>
 		<key>Headers/ReactiveCocoa.h</key>
 		<data>
@@ -282,23 +282,23 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		Zu+k5P2mEb2gT/Q7J8UCM+/UBmg=
+		6uu1Am482cLNZTPX4A6DHTfth+c=
 		</data>
 		<key>Modules/ReactiveCocoa.swiftmodule/arm.swiftdoc</key>
 		<data>
-		pFeRLQ1IYwW9PYsfA/ZjhU3CRAU=
+		tY5xU4tEnWiL2c8+6RYzwntFzPs=
 		</data>
 		<key>Modules/ReactiveCocoa.swiftmodule/arm.swiftmodule</key>
 		<data>
-		8QcpPw9HJFIJUyN59vxjSQgz/Us=
+		36Qabb6JPRvMoKqx2X6gFfT74GU=
 		</data>
 		<key>Modules/ReactiveCocoa.swiftmodule/arm64.swiftdoc</key>
 		<data>
-		LanQyAQOktwgG70SruYpZ6tKf8U=
+		sGAfEG56gPKHl5Td/cD8/IdO8E8=
 		</data>
 		<key>Modules/ReactiveCocoa.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		bzZq+aHcb1/ewi5FrzGWcRb87ps=
+		MyYiTFjwvmUjAHHhcZSwBr91Ki0=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -409,7 +409,7 @@
 		</data>
 		<key>Headers/RACDynamicPropertySuperclass.h</key>
 		<data>
-		i8iPPr9wFXXq7qQxNjtnK0Y3WQc=
+		feQdP/OIxKRNUWoiSC18q2W2rvY=
 		</data>
 		<key>Headers/RACEvent.h</key>
 		<data>
@@ -501,7 +501,7 @@
 		</data>
 		<key>Headers/ReactiveCocoa-Swift.h</key>
 		<data>
-		EyH8iMox9iNAwXj/abxq1M0zbCs=
+		I2aNoktAcz0EUNcLU+Ra5lWD8G0=
 		</data>
 		<key>Headers/ReactiveCocoa.h</key>
 		<data>
@@ -585,19 +585,19 @@
 		</data>
 		<key>Modules/ReactiveCocoa.swiftmodule/arm.swiftdoc</key>
 		<data>
-		pFeRLQ1IYwW9PYsfA/ZjhU3CRAU=
+		tY5xU4tEnWiL2c8+6RYzwntFzPs=
 		</data>
 		<key>Modules/ReactiveCocoa.swiftmodule/arm.swiftmodule</key>
 		<data>
-		8QcpPw9HJFIJUyN59vxjSQgz/Us=
+		36Qabb6JPRvMoKqx2X6gFfT74GU=
 		</data>
 		<key>Modules/ReactiveCocoa.swiftmodule/arm64.swiftdoc</key>
 		<data>
-		LanQyAQOktwgG70SruYpZ6tKf8U=
+		sGAfEG56gPKHl5Td/cD8/IdO8E8=
 		</data>
 		<key>Modules/ReactiveCocoa.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		bzZq+aHcb1/ewi5FrzGWcRb87ps=
+		MyYiTFjwvmUjAHHhcZSwBr91Ki0=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
