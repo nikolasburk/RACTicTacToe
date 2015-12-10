@@ -24,8 +24,8 @@ class ViewController: UIViewController {
     let name2TextField: UITextField
     let namesLabel: UILabel
     
-    var action: Action<(String, String), Game, NoError>
-    var startButtonAction: CocoaAction?
+    let viewModel: ViewModel
+    
     
     // MARK: Init and lifecycle
     
@@ -39,24 +39,15 @@ class ViewController: UIViewController {
         self.namesLabel = createLabel("No active game")
         self.namesLabel.textAlignment = NSTextAlignment.Right
         self.namesLabel.backgroundColor = UIColor.yellowColor()
+        self.viewModel = ViewModel()
         
-        //Dummy action for now. Will make a network request using the text property in the real app.
-        action = Action { s in
-            return SignalProducer { sink, _ in
-                print("sending something... \(s)")
-                let p0 = Player(name: s.0, marker: Marker.Cross)
-                let p1 = Player(name: s.1, marker: Marker.Circle)
-                sink.sendNext(Game(players: (p0, p1))) // the argument passed to sendNext needs to be of the Output type of the Action
-                sink.sendCompleted()
-            }
-        }
-    
+        
+        self.namesLabel.rac_text <~ self.viewModel.names
+        self.whosTurnLabel.rac_text <~ self.viewModel.whosTurn
+        self.winnerLabel.rac_text <~ self.viewModel.winner
+        
+        
         super.init(coder: aDecoder)
-        
-        startButtonAction = CocoaAction(action) { _ in
-            return (self.name1TextField.text!, self.name2TextField.text!)
-        }
-        
     }
     
     override func viewDidLoad() {
@@ -83,7 +74,20 @@ class ViewController: UIViewController {
         
         configureStartButton()
         
-        self.game.producer.start { print($0.value) }
+        // configure the game for KVO
+        self.game.producer.start {
+            print("new game: \($0.value)")
+            if let game = $0.value {
+                let p0 = game?.players.0
+                let p1 = game?.players.1
+                
+                if let name0 = p0?.name {
+                    if let name1 = p1?.name {
+                        self.viewModel.names.value = "\(name0) (X) vs \(name1) (O)"
+                    }
+                }
+            }
+        }
     }
     
     
@@ -95,6 +99,7 @@ class ViewController: UIViewController {
             return
         }
 
+        print("make move \(position)")
         if let currentPlayer = game.board.playersTurn {
             let boardOrMsg = makeMove(game.board, marker: currentPlayer, choice: position)
             switch boardOrMsg {
@@ -122,7 +127,10 @@ class ViewController: UIViewController {
     // MARK: RAC Signals
     
     func addSignalProducer() {
-        let nameStrings = self.name1TextField.rac_textSignal().toSignalProducer().map {text in text as! String}
+        let nameStrings = self.name1TextField
+            .rac_textSignal()
+            .toSignalProducer()
+            .map {text in text as! String}
         nameStrings.startWithNext {
             s in print(s)
         }
@@ -145,8 +153,17 @@ class ViewController: UIViewController {
     
     func configureStartButton() {
         
-        self.startButton.addTarget(self.startButtonAction, action: CocoaAction.selector, forControlEvents: .TouchUpInside)
-
+        self.startButton
+                .signalForControlEvents(UIControlEvents.TouchUpInside)
+                .map { _ in (self.name1TextField.text!, self.name2TextField.text!)}
+                .observe { event in
+                    if let names = event.value {
+                        print("received names \(names)")
+                        let game = Game(playersNames: names)
+                        self.game.value = game
+                    }
+                    
+                }
         
         /**
         // come back to this when we know how to bind
@@ -275,6 +292,7 @@ class ViewController: UIViewController {
 }
 
 
+
 // MARK: RAC helpers
 
 //let action = Action<Void, String, NoError> {
@@ -289,8 +307,21 @@ class ViewController: UIViewController {
 //        }
 //    }
 //}
+////Dummy action for now. Will make a network request using the text property in the real app.
+//action = Action { s in
+//    return SignalProducer { sink, _ in
+//        print("sending something... \(s)")
+//        let p0 = Player(name: s.0, marker: Marker.Cross)
+//        let p1 = Player(name: s.1, marker: Marker.Circle)
+//        sink.sendNext(Game(players: (p0, p1))) // the argument passed to sendNext needs to be of the Output type of the Action
+//        sink.sendCompleted()
+//    }
+//}
+//startButtonAction = CocoaAction(action) { _ in
+//    return (self.name1TextField.text!, self.name2TextField.text!)
+//}
 
-//let cocoaAction = createCocoaAction()
+
 
 func createCocoaAction(textField1: UITextField? = nil, textField2: UITextField? = nil) -> CocoaAction {
     let someAction = Action<Void, String, NoError> {
