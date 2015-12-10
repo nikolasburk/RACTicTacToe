@@ -50,11 +50,8 @@ class ViewController: UIViewController {
         self.namesLabel.rac_text <~ self.viewModel.names
         self.whosTurnLabel.rac_text <~ self.viewModel.whosTurn
         self.winnerLabel.rac_text <~ self.viewModel.winner
-        
-        // Bind grid view to board's grid
-        self.gridView <~ SignalProducer { sink, _ in
-            sink.sendNext(createGridView())
-        }
+        self.gridView.value.rac_userInteractionEnabled <~ self.viewModel.canMakeMove
+
         
         super.init(coder: aDecoder)
     }
@@ -89,14 +86,6 @@ class ViewController: UIViewController {
         
         // Observe taps on the grid
         gridViewSignal()
-//        if let taps = createTapSignal() {
-//            taps.observe { event in
-//                switch event {
-//                    case .Next(let position): self.playerTappedCell(position)
-//                    default: print(event)//fatalError("")
-//                }
-//            }
-//        }
     }
     
     
@@ -135,6 +124,7 @@ class ViewController: UIViewController {
         self.game.value = Game(players: game.players, board: newBoard)
         if let winner = self.game.value?.board.winner {
             self.viewModel.winner.value = "The winner is \(winner)"
+            self.viewModel.canMakeMove.value = false
         }
     }
     
@@ -187,6 +177,8 @@ class ViewController: UIViewController {
                         let game = Game(playersNames: names)
                         self.game.value = game
                         self.gridView.value.clear()
+                        self.viewModel.canMakeMove.value = true
+
                     }
                 }
         

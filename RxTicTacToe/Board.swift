@@ -73,6 +73,16 @@ struct Board {
         }
     }
     
+    var canMakeMove: Bool {
+        get {
+            if (self.winner != nil) {
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+    
     init() {
         let fields = [Field](count: 9, repeatedValue:Field.Empty)
         grid = fieldsToGrid(fields)

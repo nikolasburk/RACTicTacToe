@@ -15,6 +15,8 @@ struct ViewModel {
     let names: MutableProperty<String> = MutableProperty("Please enter names of players")
     let winner: MutableProperty<String> = MutableProperty("No winner yet")
     
+    let canMakeMove: MutableProperty<Bool> = MutableProperty(false)
+    
     func newGame(game: Game) {
         
         // update the names of the players

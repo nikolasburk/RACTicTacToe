@@ -16,6 +16,8 @@ struct AssociationKey {
     static var hidden: UInt8 = 1
     static var date: UInt8 = 2
     static var text: UInt8 = 3
+    static var userInteractionEnabled: UInt8 = 4 // added by NB
+
 }
 
 func lazyAssociatedProperty<T: AnyObject>(host: AnyObject, key: UnsafePointer<Void>, factory: ()->T) -> T {
@@ -41,6 +43,11 @@ func lazyMutableProperty<T>(host: AnyObject, key: UnsafePointer<Void>, setter: T
 extension UIView {
     public var rac_hidden: MutableProperty<Bool> {
         return lazyMutableProperty(self, key: &AssociationKey.hidden, setter: { self.hidden = $0 }, getter: { self.hidden })
+    }
+    
+    // added by NB
+    public var rac_userInteractionEnabled: MutableProperty<Bool> {
+        return lazyMutableProperty(self, key: &AssociationKey.userInteractionEnabled, setter: { self.userInteractionEnabled = $0 }, getter: { self.userInteractionEnabled })
     }
 }
 
