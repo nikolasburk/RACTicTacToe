@@ -15,11 +15,12 @@ struct Player {
 
 struct Game {
     
-    let board = Board()
+    let board: Board
     let players: (Player, Player)
     
-    init(players: (Player, Player)) {
+    init(players: (Player, Player), board: Board = Board()) {
         self.players = players
+        self.board = board
     }
-    
+
 }

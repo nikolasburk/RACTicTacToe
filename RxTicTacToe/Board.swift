@@ -19,7 +19,7 @@ enum Field {
     case Empty
     case Marked(Marker)
 }
-
+ 
 extension Field: Equatable {
 
 }
@@ -90,9 +90,12 @@ struct Board {
 func makeMove(board: Board, marker: Marker, choice: (Int, Int)) -> BoardOrMsg {
     assert(0...2 ~= choice.0 && 0...2 ~= choice.1)
     
+    
     if board.grid[choice.0][choice.1] == Field.Empty {
         return BoardOrMsg.Error("Illegal move, (\(choice.0), \(choice.1) is not empty)")
     }
+    
+    print("Put \(marker) at position \(choice)")
     
     var newGrid = board.grid
     newGrid[choice.0][choice.1] = Field.Marked(marker)
