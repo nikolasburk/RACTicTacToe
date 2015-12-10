@@ -67,7 +67,7 @@ class GridView : UIView {
     }
 
     required init?(coder aDecoder: NSCoder) {
-        self.tapHandler = { p in print ("\(p)")}
+        self.tapHandler = { p in print ("\(p)") }
         super.init(coder: aDecoder)
     }
 
@@ -83,34 +83,61 @@ class GridView : UIView {
     func cellsTapGestureRecognizers() -> [UITapGestureRecognizer?] {
         return gridViewCells.map {cell in cell.tapGestureRecognizer()}
     }
+    
+    func updateCell(atPosition position: Position, withMarker marker: Marker) {
+        print("update cell at position \(position) with marker \(marker)")
+        let index = positionToIndex(position)
+        self.gridViewCells[index].image = UIImage(named: pictureNameForMarker(marker))
+    }
+    
+    func clear() {
+        for cell in self.gridViewCells {
+            cell.image = UIImage(named: pictureNameForMarker())
+        }
+    }
+    
 }
 
+func positionToIndex(position: Position) -> Int {
+    let row = position.0
+    let col = position.1
+    return row*gridSize.0 + col
+}
+
+func indexToPosition(index: Int) -> Position {
+    let row = index / gridSize.1
+    let col = index % gridSize.0
+    return (row, col)
+}
 
 func createCells(gridView: GridView, numCells: Int = 9, var cells: [GridViewCell] = []) -> [GridViewCell] {
     if cells.count == numCells {
         return cells
     }
-    let frame = gridView.frame
-    let scaleFactor: CGFloat = 3
-    let cellSize = frame.scaleSize(withXFactor: scaleFactor, yFactor: scaleFactor)
-    let origin = determineOrigin(withIndex: cells.count, size: cellSize)
-    let targetFrame = CGRectMake(origin.x, origin.y, cellSize.width, cellSize.height)
     
-    let newCell = GridViewCell(frame: targetFrame, position: positionFromIndex(cells.count), tapHandler: gridView.tapHandler)
-    newCell.image = UIImage(named: "cross")
-    newCell.userInteractionEnabled = true
-    let tap = UITapGestureRecognizer(target: newCell, action: "handleTap:")
-    newCell.addGestureRecognizer(tap)
-    
+    let newCell = createCell(gridView, position: indexToPosition(cells.count))
     cells.append(newCell)
     return createCells(gridView, numCells: 9, cells: cells)
 }
 
-func positionFromIndex(index: Int) -> (Int, Int) {
-    let row = index / gridSize.1
-    let col = index % gridSize.0
-    return (row, col)
+
+func createCell(gridView: GridView, position: Position, marker: Marker? = nil) -> GridViewCell {
+    
+    let frame = gridView.frame
+    let scaleFactor: CGFloat = 3
+    let cellSize = frame.scaleSize(withXFactor: scaleFactor, yFactor: scaleFactor)
+    let origin = determineOrigin(withIndex: positionToIndex(position), size: cellSize)
+    let targetFrame = CGRectMake(origin.x, origin.y, cellSize.width, cellSize.height)
+
+    let newCell = GridViewCell(frame: targetFrame, position: position, tapHandler: gridView.tapHandler)
+    newCell.image = UIImage(named: pictureNameForMarker(marker))
+    newCell.userInteractionEnabled = true
+    let tap = UITapGestureRecognizer(target: newCell, action: "handleTap:")
+    newCell.addGestureRecognizer(tap)
+
+    return newCell
 }
+
 
 
 // MARK: Determine cell size
@@ -120,7 +147,18 @@ extension CGRect {
     func scaleSize(withXFactor xFactor: CGFloat, yFactor: CGFloat) -> CGSize {
         return CGSize(width: self.size.width/xFactor, height: self.size.height/yFactor)
     }
+}
 
+func pictureNameForMarker(maybeMarker: Marker? = nil) -> String {
+    if let marker = maybeMarker {
+        switch marker {
+            case .Cross:
+                return "cross"
+            case .Circle:
+                return "circle"
+        }
+    }
+    return "blank"
 }
 
 func determineOrigin(withIndex index: Int, size: CGSize) -> CGPoint {
@@ -128,6 +166,12 @@ func determineOrigin(withIndex index: Int, size: CGSize) -> CGPoint {
     let y = CGFloat(row)*size.height
     let col = index % gridSize.0
     let x = CGFloat(col)*size.width
+    return CGPoint(x: x, y: y)
+}
+
+func determineOrigin(withPosition position: Position, size: CGSize) -> CGPoint {
+    let y = CGFloat(position.0)*size.height
+    let x = CGFloat(position.1)*size.width
     return CGPoint(x: x, y: y)
 }
 

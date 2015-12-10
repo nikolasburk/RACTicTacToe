@@ -96,10 +96,38 @@ struct Board {
     // should always contain nine fields
     let grid: Grid
     
+    // returns the marker of the player with the next turn (nil if there are no empty fields, thus no turns left)
+    var playersTurn: Marker? {
+        get {
+            let fields = grid.flatMap{$0}
+            if (fields.filter {f in f != Field.Empty}.count) == fields.count {
+                return nil
+            }
+            return fields.filter { $0 == Field.Marked(Marker.Cross) }.count <=
+                fields.filter{ $0 == Field.Marked(Marker.Circle) }.count ? Marker.Cross : Marker.Circle
+        }
+    }
+
+    init() {
+        let fields = [Field](count: 9, repeatedValue:Field.Empty)
+        grid = fieldsToGrid(fields)
+    }
+    
     init(fields: [Field]) {
         grid = fieldsToGrid(fields)
     }
+    
+    init(grid: [[Field]]) {
+        self.grid = grid
+    }
 }
+
+let emptyFields = [Field](count: 9, repeatedValue:Field.Empty)
+let count = emptyFields.filter {f in f == Field.Empty}.count
+count
+
+let b = Board()
+b.playersTurn
 
 let c = [[1,2,3], [4,5,6], [7,8,9]]
 c[0][2] // first is row, second is col

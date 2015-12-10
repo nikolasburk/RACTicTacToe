@@ -24,7 +24,7 @@ extension Field: Equatable {
 
 }
 
-func ==(lhs: Field, rhs: Field) -> Bool {
+func == (lhs: Field, rhs: Field) -> Bool {
     switch (lhs, rhs) {
     case (.Empty, .Empty):
         return true
@@ -49,11 +49,14 @@ struct Board {
     var playersTurn: Marker? {
         get {
             let fields = grid.flatMap{$0}
-            if (fields.filter {f in f == Field.Empty}.count) == fields.count {
+            if (fields.filter {f in f != Field.Empty}.count) == fields.count {
                 return nil
             }
-            return fields.filter { $0 == Field.Marked(Marker.Cross) }.count <=
-                fields.filter{ $0 == Field.Marked(Marker.Circle) }.count ? Marker.Cross : Marker.Circle
+            let crossedFields = fields.filter { $0 == Field.Marked(Marker.Cross) }.count
+            let circledFields = fields.filter { $0 == Field.Marked(Marker.Circle) }.count
+            let marker = circledFields < crossedFields ? Marker.Circle : Marker.Cross
+            print("circles: \(circledFields), crossed: \(crossedFields) --> \(marker)")
+            return marker
         }
     }
     
@@ -90,8 +93,7 @@ struct Board {
 func makeMove(board: Board, marker: Marker, choice: (Int, Int)) -> BoardOrMsg {
     assert(0...2 ~= choice.0 && 0...2 ~= choice.1)
     
-    
-    if board.grid[choice.0][choice.1] == Field.Empty {
+    if board.grid[choice.0][choice.1] != Field.Empty {
         return BoardOrMsg.Error("Illegal move, (\(choice.0), \(choice.1) is not empty)")
     }
     
@@ -124,14 +126,14 @@ func fieldsToGrid(fields: [Field]) -> Grid {
 // MARK: Check for winner
 
 func playerWon(marker: Marker, grid: Grid) -> Bool {
-    if let _ = checkRows(marker, grid: grid) {
-        return true
+    if let m = checkRows(marker, grid: grid) {
+        return m == marker
     }
-    else if let _ = checkColumns(marker, grid: grid) {
-        return true
+    else if let m = checkColumns(marker, grid: grid) {
+        return m == marker
     }
-    else if let _ = checkDiagonals(marker, grid: grid) {
-        return true
+    else if let m = checkDiagonals(marker, grid: grid) {
+        return m == marker
     }
     return false
 }
@@ -166,16 +168,16 @@ func checkDiagonals(marker: Marker, grid: Grid) -> Marker? {
     if grid[0][0] == grid[1][1] {
         if grid[1][1] == grid[2][2] {
             switch grid[0][0] {
-            case Field.Marked(let m):
-                if m == marker {
-                    return marker
+                case Field.Marked(let m):
+                    if m == marker {
+                        return marker
+                    }
+                    else {
+                        return theOtherMarker(marker)
+                    }
+                default:
+                    return nil
                 }
-                else {
-                    return theOtherMarker(marker)
-                }
-            default:
-                return nil
-            }
         }
     }
     if grid[2][0] == grid[1][1] {

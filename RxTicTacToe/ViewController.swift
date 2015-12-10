@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     let game = MutableProperty<Game?>(nil)
     
     // UI elements
-    let gridView: GridView
+    let gridView: MutableProperty<GridView>
     let startButton: UIButton
     let whosTurnLabel: UILabel
     let winnerLabel: UILabel
@@ -24,13 +24,16 @@ class ViewController: UIViewController {
     let name2TextField: UITextField
     let namesLabel: UILabel
     
+    // View model
     let viewModel: ViewModel
     
     
     // MARK: Init and lifecycle
     
     required init?(coder aDecoder: NSCoder) {
-        self.gridView = createGridView()
+        
+        // Create (and partly configure) the UI elements
+        self.gridView = MutableProperty(createGridView())
         self.startButton = createButton("Start new game")
         self.whosTurnLabel = createLabel("Enter names of players")
         self.winnerLabel = createLabel("No winner yet")
@@ -39,19 +42,27 @@ class ViewController: UIViewController {
         self.namesLabel = createLabel("No active game")
         self.namesLabel.textAlignment = NSTextAlignment.Right
         self.namesLabel.backgroundColor = UIColor.yellowColor()
+        
+        // Instantiate view model
         self.viewModel = ViewModel()
-        
-        
+
+        // Bind view model properties to labels
         self.namesLabel.rac_text <~ self.viewModel.names
         self.whosTurnLabel.rac_text <~ self.viewModel.whosTurn
         self.winnerLabel.rac_text <~ self.viewModel.winner
         
+        // Bind grid view to board's grid
+        self.gridView <~ SignalProducer { sink, _ in
+            sink.sendNext(createGridView())
+        }
         
         super.init(coder: aDecoder)
     }
     
     override func viewDidLoad() {
-        self.view.addSubview(self.gridView)
+        
+        // Add views and constraints
+        self.view.addSubview(self.gridView.value)
         setupConstraintsForGridView()
         self.view.addSubview(self.whosTurnLabel)
         self.view.addSubview(self.winnerLabel)
@@ -62,32 +73,30 @@ class ViewController: UIViewController {
         setupConstraintsForNameElements()
         self.view.addSubview(self.startButton)
         setupConstraintsForStartButton()
-        
-        if let taps = createTapSignal() {
-            taps.observe { event in
-                switch event {
-                    case .Next(let position): self.playerTappedCell(position)
-                    default: fatalError("")
-                }
-            }
-        }
-        
+
+        // Configure the start button
         configureStartButton()
         
-        // configure the game for KVO
+        // Configure the game property for KVO
         self.game.producer.start {
             print("new game: \($0.value)")
-            if let game = $0.value {
-                let p0 = game?.players.0
-                let p1 = game?.players.1
-                
-                if let name0 = p0?.name {
-                    if let name1 = p1?.name {
-                        self.viewModel.names.value = "\(name0) (X) vs \(name1) (O)"
-                    }
+            if let maybeGame = $0.value {
+                if let game = maybeGame {
+                    self.viewModel.newGame(game)
                 }
             }
         }
+        
+        // Observe taps on the grid
+        gridViewSignal()
+//        if let taps = createTapSignal() {
+//            taps.observe { event in
+//                switch event {
+//                    case .Next(let position): self.playerTappedCell(position)
+//                    default: print(event)//fatalError("")
+//                }
+//            }
+//        }
     }
     
     
@@ -100,17 +109,20 @@ class ViewController: UIViewController {
         }
 
         print("make move \(position)")
+        
         if let currentPlayer = game.board.playersTurn {
             let boardOrMsg = makeMove(game.board, marker: currentPlayer, choice: position)
             switch boardOrMsg {
                 case .Error(let msg): displayErrorMsgForInvalidMove(msg)
-                case .Success(let newBoard): updateGame(newBoard)
+                case .Success(let newBoard):
+                    self.gridView.value.updateCell(atPosition: position, withMarker: currentPlayer)
+                    updateGame(newBoard)
             }
         }
     }
 
     func displayErrorMsgForInvalidMove(msg: String) {
-    
+        print("ERROR: \(msg)")
     }
     
     func updateGame(newBoard: Board) {
@@ -121,6 +133,9 @@ class ViewController: UIViewController {
 
         print(self.game.value)
         self.game.value = Game(players: game.players, board: newBoard)
+        if let winner = self.game.value?.board.winner {
+            self.viewModel.winner.value = "The winner is \(winner)"
+        }
     }
     
     
@@ -139,7 +154,7 @@ class ViewController: UIViewController {
     
     func createTapSignal() -> Signal<Position, NoError>? {
         var signals: [Signal<Position, NoError>] = []
-        for maybeTap in self.gridView.cellsTapGestureRecognizers() {
+        for maybeTap in self.gridView.value.cellsTapGestureRecognizers() {
             if let tap = maybeTap {
                 let signal = tap.gestureSignalView()
                     .map { $0 as! GridViewCell }
@@ -149,6 +164,16 @@ class ViewController: UIViewController {
         }
         
         return signals.count > 0 ? Signal.merge(signals) : nil
+    }
+    
+    func gridViewSignal() -> Signal <GridView, NoError>? {
+        if let taps = createTapSignal() {
+            return taps.map { position in
+                self.playerTappedCell(position)
+                return self.gridView.value
+            }
+        }
+        return nil
     }
     
     func configureStartButton() {
@@ -161,8 +186,8 @@ class ViewController: UIViewController {
                         print("received names \(names)")
                         let game = Game(playersNames: names)
                         self.game.value = game
+                        self.gridView.value.clear()
                     }
-                    
                 }
         
         /**
@@ -190,18 +215,18 @@ class ViewController: UIViewController {
     // MARK: Setup autolayout constraints
     
     func setupConstraintsForGridView() {
-        self.gridView.translatesAutoresizingMaskIntoConstraints = false
+        self.gridView.value.translatesAutoresizingMaskIntoConstraints = false
         
         // add centering constraints
         NSLayoutConstraint(item: self.view, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal,
-            toItem: self.gridView, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant:0).active = true
+            toItem: self.gridView.value, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant:0).active = true
         NSLayoutConstraint(item: self.view, attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal,
-            toItem: self.gridView, attribute: NSLayoutAttribute.CenterY, multiplier: 1, constant:0).active = true
+            toItem: self.gridView.value, attribute: NSLayoutAttribute.CenterY, multiplier: 1, constant:0).active = true
 
         // add width/height constraints
-        NSLayoutConstraint(item: self.gridView, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
+        NSLayoutConstraint(item: self.gridView.value, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
             toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute, multiplier: 1, constant: 500).active = true
-        NSLayoutConstraint(item: self.gridView, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal,
+        NSLayoutConstraint(item: self.gridView.value, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal,
             toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute, multiplier: 1, constant: 500).active = true
     }
 
@@ -210,18 +235,18 @@ class ViewController: UIViewController {
         self.winnerLabel.translatesAutoresizingMaskIntoConstraints = false
 
         // center x
-        NSLayoutConstraint(item: self.gridView, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal,
+        NSLayoutConstraint(item: self.gridView.value, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal,
             toItem: self.whosTurnLabel, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant: 0).active = true
         // distance to grid view
-        NSLayoutConstraint(item: self.gridView, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal,
+        NSLayoutConstraint(item: self.gridView.value, attribute: NSLayoutAttribute.Top, relatedBy: NSLayoutRelation.Equal,
             toItem: self.whosTurnLabel, attribute: NSLayoutAttribute.Top, multiplier: 1, constant:45).active = true
         
         // center x
         NSLayoutConstraint(item: self.winnerLabel, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal,
-            toItem: self.gridView, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant: 0).active = true
+            toItem: self.gridView.value, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant: 0).active = true
         // distance to grid view
         NSLayoutConstraint(item: self.winnerLabel, attribute: NSLayoutAttribute.Bottom, relatedBy: NSLayoutRelation.Equal,
-            toItem: self.gridView, attribute: NSLayoutAttribute.Bottom, multiplier: 1, constant:45).active = true
+            toItem: self.gridView.value, attribute: NSLayoutAttribute.Bottom, multiplier: 1, constant:45).active = true
 
     }
     
