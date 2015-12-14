@@ -27,7 +27,7 @@ struct ViewModel {
         // reset the winner label
         self.winner.value = "No winner yet"
         
-        // determine who's turn it is (although it's probably Cross)
+        // determine who's turn it is (although it's probably Cross as Cross always begins)
         if let marker = game.board.playersTurn {
             self.whosTurn.value = "Current turn: \(marker)"
         } else {

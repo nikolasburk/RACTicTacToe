@@ -17,6 +17,7 @@ struct AssociationKey {
     static var date: UInt8 = 2
     static var text: UInt8 = 3
     static var userInteractionEnabled: UInt8 = 4 // added by NB
+    static var enabled: UInt8 = 5 // added by NB
 
 }
 
@@ -54,6 +55,12 @@ extension UIView {
 extension UILabel {
     public var rac_text: MutableProperty<String> {
         return lazyMutableProperty(self, key: &AssociationKey.text, setter: { self.text = $0 }, getter: { self.text ?? "" })
+    }
+}
+
+extension UIButton {
+    public var rac_enabled: MutableProperty<Bool> {
+        return lazyMutableProperty(self, key: &AssociationKey.text, setter: { self.enabled = $0 }, getter: { self.enabled })
     }
 }
 

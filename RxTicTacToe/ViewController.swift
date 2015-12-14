@@ -167,6 +167,32 @@ class ViewController: UIViewController {
     }
     
     func configureStartButton() {
+
+        // Disable the button initially
+        self.startButton.enabled = false
+        
+        
+        let name1Signal = self.name1TextField.rac_textSignal()
+            .toSignalAssumingHot()
+            .assumeNoErrors()
+            .map { text in text as! String }
+            .map { $0.characters.count }
+        
+        let name2Signal = self.name2TextField.rac_textSignal()
+            .toSignalAssumingHot()
+            .assumeNoErrors()
+            .map { text in text as! String }
+            .map { $0.characters.count }
+        
+        // Enable it whenever both textfields contain at least one character
+        name1Signal.combineLatestWith(name2Signal)
+            .map { b0 in
+                b0.0 > 0 && b0.1 > 0
+            }.observe { event in
+                if let buttonEnabled = event.value {
+                    self.startButton.enabled = buttonEnabled
+                }
+        }
         
         self.startButton
                 .signalForControlEvents(UIControlEvents.TouchUpInside)
@@ -180,26 +206,7 @@ class ViewController: UIViewController {
                         self.viewModel.canMakeMove.value = true
 
                     }
-                }
-        
-        /**
-        // come back to this when we know how to bind
-        // signal to enabled property of UIButton
-        let name1Signal = self.name1TextField.rac_textSignal()
-                .toSignalAssumingHot()
-                .assumeNoErrors()
-                .map { text in text as! String }
-                .map { $0.characters.count }
-
-        let name2Signal = self.name2TextField.rac_textSignal()
-                .toSignalAssumingHot()
-                .assumeNoErrors()
-                .map { text in text as! String }
-                .map { $0.characters.count }
-
-        let combinedNameSignals = name1Signal.combineLatestWith(name2Signal)
-                                    .map { $0.0 > 0 && $0.1 > 0 }
-        */
+            }
         
     }
     
@@ -306,52 +313,6 @@ class ViewController: UIViewController {
             toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute, multiplier: 1, constant: 75).active = true
         
     }
-}
-
-
-
-// MARK: RAC helpers
-
-//let action = Action<Void, String, NoError> {
-////    return SignalProducer.never // this works as well
-//    return SignalProducer(value: "hello")
-//}
-//let cocoaAction = CocoaAction(action) { x in
-//    print("button tapped \(x)")
-//    if let button = x {
-//        if let title = button.titleLabel!!.text {
-//            print("the button with title ---\(title)--- was pressed")
-//        }
-//    }
-//}
-////Dummy action for now. Will make a network request using the text property in the real app.
-//action = Action { s in
-//    return SignalProducer { sink, _ in
-//        print("sending something... \(s)")
-//        let p0 = Player(name: s.0, marker: Marker.Cross)
-//        let p1 = Player(name: s.1, marker: Marker.Circle)
-//        sink.sendNext(Game(players: (p0, p1))) // the argument passed to sendNext needs to be of the Output type of the Action
-//        sink.sendCompleted()
-//    }
-//}
-//startButtonAction = CocoaAction(action) { _ in
-//    return (self.name1TextField.text!, self.name2TextField.text!)
-//}
-
-
-
-func createCocoaAction(textField1: UITextField? = nil, textField2: UITextField? = nil) -> CocoaAction {
-    let someAction = Action<Void, String, NoError> {
-        return SignalProducer.empty
-    }
-    let cocoaAction = CocoaAction(someAction) { x in
-        if let button = x {
-            if let title = button.titleLabel!!.text {
-                print("the button with title ---\(title)--- was pressed")
-            }
-        }
-    }
-    return cocoaAction
 }
 
 
